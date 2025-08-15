@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}SmartCareer - AI Career Assistant{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="gradient-bg text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+    <div class="md:flex md:items-center md:justify-between">
+      <div class="md:w-1/2 mb-10 md:mb-0">
+        <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">Your AI-Powered Career Success Partner</h1>
+        <p class="text-xl mb-8 text-indigo-100">SmartCareer uses advanced AI to analyze your resume, craft perfect cover letters, and prepare you for interviews — all in one place.</p>
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <a href="{{ url_for('register') }}" class="bg-white text-indigo-600 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition duration-300 text-center">Try It Free</a>
+          <a href="#features" class="border-2 border-white text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-indigo-600 transition duration-300 text-center">See Features</a>
+        </div>
+      </div>
+      <div class="md:w-1/2 flex justify-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135810.png" alt="Career Success" class="w-64 h-64 md:w-80 md:h-80 floating">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<div id="features" class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Supercharge Your Job Search</h2>
+      <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">Our AI-powered tools give you the competitive edge in today's job market.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Feature 1 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-100 text-indigo-600 mb-6">
+          <i class="fas fa-file-alt text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Resume Analysis</h3>
+        <p class="text-gray-600">Get detailed feedback on your resume with our Gemini-powered analysis. We'll highlight strengths, weaknesses, and suggest improvements tailored to your target jobs.</p>
+        <div class="mt-6">
+          <a href="{{ url_for('resume_analysis') }}" class="text-indigo-600 font-medium hover:text-indigo-500">Try Now →</a>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-100 text-indigo-600 mb-6">
+          <i class="fas fa-envelope-open-text text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Cover Letter Generator</h3>
+        <p class="text-gray-600">Create personalized, compelling cover letters in minutes. Our AI crafts unique letters for each application, matching your skills to the job requirements.</p>
+        <div class="mt-6">
+          <a href="{{ url_for('cover_letter') }}" class="text-indigo-600 font-medium hover:text-indigo-500">Generate →</a>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-lg transition duration-300">
+        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-100 text-indigo-600 mb-6">
+          <i class="fas fa-comments text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Interview Prep</h3>
+        <p class="text-gray-600">Practice with AI-powered mock interviews. Get realistic questions, instant feedback on your answers, and tips to improve your performance.</p>
+        <div class="mt-6">
+          <a href="{{ url_for('interview_prep') }}" class="text-indigo-600 font-medium hover:text-indigo-500">Start Prep →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How It Works -->
+<div id="how-it-works" class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">How SmartCareer Works</h2>
+      <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">Three simple steps to career success</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="flex flex-col items-center text-center">
+        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+          <span class="text-xl font-bold">1</span>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Upload Your Resume</h3>
+        <p class="text-gray-600">Upload your PDF resume and let AI extract key details.</p>
+      </div>
+      <div class="flex flex-col items-center text-center">
+        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+          <span class="text-xl font-bold">2</span>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Get AI Analysis</h3>
+        <p class="text-gray-600">Receive personalized insights and improvement suggestions.</p>
+      </div>
+      <div class="flex flex-col items-center text-center">
+        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+          <span class="text-xl font-bold">3</span>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Create & Prepare</h3>
+        <p class="text-gray-600">Generate cover letters and practice interviews with AI.</p>
+      </div>
+    </div>
+
+    <div class="mt-16 flex justify-center">
+      <a href="{{ url_for('register') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+        Start Your Free Trial
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- About Section -->
+<div id="about" class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+      <div class="mb-8 lg:mb-0">
+        <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-6">AI-Powered Career Solutions</h2>
+        <div class="space-y-6">
+          <div class="bg-indigo-50 p-6 rounded-lg border-l-4 border-indigo-600">
+            <h3 class="text-lg font-semibold text-indigo-700 mb-2">Our Vision</h3>
+            <p class="text-gray-700">Democratizing career success through intelligent automation.</p>
+          </div>
+          <p class="text-lg text-gray-600">
+            Since 2023, we've empowered <span class="font-bold text-indigo-600">50,000+ professionals</span> with AI tools that deliver real results:
+          </p>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-indigo-50 p-4 rounded-lg text-center border border-indigo-100">
+              <p class="text-3xl font-bold text-indigo-600">3.5×</p>
+              <p class="text-sm text-gray-600">More interviews</p>
+            </div>
+            <div class="bg-indigo-50 p-4 rounded-lg text-center border border-indigo-100">
+              <p class="text-3xl font-bold text-indigo-600">80%</p>
+              <p class="text-sm text-gray-600">Faster hiring</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-4 mt-6">
+            <a href="{{ url_for('dashboard') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition flex items-center">
+              Our Story <i class="fas fa-chevron-right ml-2 text-xs"></i>
+            </a>
+            <a href="#" class="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-md hover:bg-indigo-50 transition flex items-center">
+              Case Studies <i class="fas fa-chevron-right ml-2 text-xs"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="relative">
+        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+             alt="Team collaboration"
+             class="rounded-xl shadow-lg w-full max-w-md hover:shadow-xl transition duration-300">
+        <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-md">
+          <div class="flex items-center">
+            <div class="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mr-2">
+              <i class="fas fa-check"></i>
+            </div>
+            <p class="text-sm font-medium">Trusted by top companies</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Section -->
+<div class="gradient-bg text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold sm:text-4xl mb-6">Ready to transform your career?</h2>
+      <p class="text-xl mb-8 text-indigo-100 max-w-3xl mx-auto">Join thousands of professionals who have accelerated their job search with SmartCareer's AI-powered tools.</p>
+      <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+        <a href="{{ url_for('register') }}" class="bg-white text-indigo-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition duration-300 text-center">Start Free Trial</a>
+        <a href="#contact" class="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-indigo-600 transition duration-300 text-center">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

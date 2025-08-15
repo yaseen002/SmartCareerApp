@@ -1,0 +1,129 @@
+<!-- templates/resume_analysis.html -->
+{% extends "base.html" %}
+{% block title %}Analyze Resume - SmartCareer{% endblock %}
+
+{% block head %}
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-extrabold text-gray-900">📄 Resume Analyzer</h1>
+    <p class="mt-2 text-lg text-gray-600">Upload your PDF resume and get AI-powered feedback in seconds.</p>
+  </div>
+
+  <!-- Upload Form -->
+  <form method="POST" enctype="multipart/form-data" id="upload-form" class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 mb-12 transition-all duration-300 hover:shadow-xl">
+    {{ form.hidden_tag() }}
+
+    <div>
+      <label for="resume" class="block text-sm font-medium text-gray-700 mb-2">Upload Resume (PDF)</label>
+      <input
+        type="file"
+        name="resume"
+        accept=".pdf"
+        class="w-full text-sm text-gray-500
+               file:mr-4 file:py-2 file:px-4
+               file:rounded-full file:border-0
+               file:text-sm file:font-semibold
+               file:bg-indigo-600 file:text-white
+               hover:file:bg-indigo-700"
+        required
+      >
+      <p class="mt-2 text-xs text-gray-500">Supported: PDF only • Max 5MB</p>
+    </div>
+
+    <div class="text-center mt-6">
+      <button
+        type="submit"
+        id="submit-btn"
+        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-105 transition">
+        <i class="fas fa-magic mr-2"></i> Analyze with AI
+      </button>
+    </div>
+  </form>
+
+  <!-- Override Warning Script -->
+  {% if has_resume %}
+    <script>
+      document.getElementById('upload-form').addEventListener('submit', function (e) {
+        if (!confirm("⚠️ Uploading a new resume will replace your previous one. Continue?")) {
+          e.preventDefault();
+        }
+      });
+    </script>
+  {% endif %}
+
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="hidden fixed inset-0 bg-white bg-opacity-90 z-50 flex items-center justify-center flex-col">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
+    <h2 class="text-xl font-semibold text-gray-800 text-center max-w-md">
+      We are analyzing your resume.<br>Please wait, thank you for your patience.
+    </h2>
+    <p class="text-sm text-gray-500 mt-2">This may take up to 30 seconds...</p>
+  </div>
+</div>
+
+<!-- AJAX Submission -->
+<script>
+  document.getElementById('upload-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const fileInput = this.querySelector('input[type="file"]');
+    const file = fileInput.files[0];
+    if (!file) {
+      alert("Please select a file.");
+      return;
+    }
+
+    // ✅ Get CSRF token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    if (!csrfToken) {
+      console.error("CSRF token not found!");
+      alert("Security error: No CSRF token. Please reload the page.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    // Show loading
+    document.getElementById('loading-screen').classList.remove('hidden');
+
+    fetch("{{ url_for('resume_analysis') }}", {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': csrfToken  // ← Must match Flask-WTF's expected header
+      }
+    })
+    .then(response => {
+      // ✅ Log response type for debugging
+      const contentType = response.headers.get('Content-Type');
+      if (!contentType || !contentType.includes('application/json')) {
+        return response.text().then(text => {
+          console.error("Expected JSON, got HTML:", text.slice(0, 200));
+          throw new Error("Server returned HTML instead of JSON. Check Flask logs.");
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        window.location.href = "{{ url_for('view_analysis') }}";
+      } else {
+        alert("Error: " + (data.error || "Unknown error"));
+      }
+    })
+    .catch(error => {
+      console.error("AJAX Error:", error);
+      alert("Upload failed. Open browser console for details.");
+    })
+    .finally(() => {
+      document.getElementById('loading-screen').classList.add('hidden');
+    });
+  });
+</script>
+{% endblock %}

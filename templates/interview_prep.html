@@ -1,0 +1,295 @@
+<!-- templates/interview_prep.html -->
+{% extends "base.html" %}
+{% block title %}Interview Preparation - SmartCareer{% endblock %}
+
+{% block head %}
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-extrabold text-gray-900">💬 Interview Preparation</h1>
+    <p class="mt-2 text-lg text-gray-600">Get AI-generated questions, answers, and focus areas based on your resume and job description.</p>
+  </div>
+
+  <!-- Check if resume exists -->
+  {% if not has_resume %}
+    <div class="bg-red-50 border border-red-200 text-red-800 p-6 rounded-xl text-center">
+      <h2 class="text-lg font-bold">❌ Resume Required</h2>
+      <p>Please upload your resume first before preparing for interviews.</p>
+      <a href="{{ url_for('resume_analysis') }}" class="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+        Upload Resume
+      </a>
+    </div>
+  {% else %}
+    <!-- Interview Prep Form -->
+    <form id="interview-prep-form" class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 mb-8">
+      <div class="mb-6">
+        <label for="job_title" class="block text-sm font-medium text-gray-700">Job Title</label>
+        <input
+          type="text"
+          name="job_title"
+          id="job_title"
+          required
+          class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="e.g., Data Scientist"
+        >
+      </div>
+
+      <div class="mb-6">
+        <label for="job_description" class="block text-sm font-medium text-gray-700">Job Description</label>
+        <textarea
+          name="job_description"
+          id="job_description"
+          rows="6"
+          required
+          class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="Paste the full job description..."
+        ></textarea>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-3">Select Output Options</label>
+        <div class="space-y-2">
+          <label class="inline-flex items-center">
+            <input type="checkbox" name="options" value="questions_with_answers" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
+            <span class="ml-2 text-gray-700">Questions with Suggested Answers</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" name="options" value="focus_areas" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
+            <span class="ml-2 text-gray-700">Key Focus Areas</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" name="options" value="behavioral" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            <span class="ml-2 text-gray-700">Behavioral Questions</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" name="options" value="technical" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            <span class="ml-2 text-gray-700">Technical Questions</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button
+          type="submit"
+          id="generate-btn"
+          class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg shadow hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition">
+          <i class="fas fa-magic mr-2"></i> Generate Interview Prep
+        </button>
+      </div>
+    </form>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="hidden fixed inset-0 bg-white bg-opacity-90 z-50 flex items-center justify-center flex-col">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mb-4"></div>
+      <h2 class="text-xl font-semibold text-gray-800 text-center max-w-md">
+        Preparing your interview guide...<br>Please wait, thank you for your patience.
+      </h2>
+      <p class="text-sm text-gray-500 mt-2">This may take up to 30 seconds...</p>
+    </div>
+
+    <!-- Generated Content -->
+    <div id="result-container" class="hidden">
+      <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div class="bg-blue-600 text-white px-6 py-4">
+          <h2 class="text-xl font-bold flex items-center">
+            <i class="fas fa-comments mr-2"></i> Interview Preparation Guide
+          </h2>
+        </div>
+        <div class="p-8 bg-white prose max-w-none">
+          <pre id="prep-content" class="whitespace-pre-wrap text-gray-800 leading-relaxed font-sans text-base"></pre>
+        </div>
+        <div class="bg-gray-50 px-8 py-4 flex justify-between items-center">
+          <div class="text-sm text-gray-500">Generated with AI • Practice and personalize</div>
+          <div class="space-x-3">
+            <button onclick="downloadAs('txt')" class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+              <i class="fas fa-download mr-1"></i> TXT
+            </button>
+            <!-- <button onclick="downloadAs('pdf')" class="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+              <i class="fas fa-file-pdf mr-1"></i> PDF
+            </button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+// Download as TXT or PDF
+function downloadAs(type) {
+  const content = document.getElementById('prep-content').textContent;
+  const filename = `interview-prep.${type}`;
+  const blob = new Blob([content], {
+    type: type === 'txt' ? 'text/plain' : 'application/pdf'
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// AJAX Form Submission
+document.getElementById('interview-prep-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const form = this;
+  const jobTitle = form.job_title.value.trim();
+  const jobDescription = form.job_description.value.trim();
+
+  // Validate inputs
+  if (!jobTitle) {
+    alert("Job title is required.");
+    return;
+  }
+  if (!jobDescription) {
+    alert("Job description is required.");
+    return;
+  }
+
+  // Collect selected options
+  const options = [];
+  for (let checkbox of form.querySelectorAll('input[name="options"]:checked')) {
+    options.push(checkbox.value);
+  }
+
+  const formData = new FormData();
+  formData.append('job_title', jobTitle);
+  formData.append('job_description', jobDescription);
+  formData.append('options', JSON.stringify(options));
+
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+  // Show loading screen
+  document.getElementById('loading-screen').classList.remove('hidden');
+  document.getElementById('result-container').classList.add('hidden');
+
+  fetch("{{ url_for('interview_prep') }}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': csrfToken
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(err => {
+        throw new Error(err.error || 'Unknown error');
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      displayInterviewPrep(data.content);
+      document.getElementById('result-container').classList.remove('hidden');
+    } else {
+      throw new Error(data.error || 'Failed to generate prep');
+    }
+  })
+  .catch(error => {
+    console.error("Interview Prep Error:", error);
+    alert("Failed to generate interview prep: " + error.message);
+  })
+  .finally(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+  });
+});
+
+// ✅ Render structured interview prep
+function displayInterviewPrep(jsonContent) {
+  let data;
+
+  // Try to parse JSON
+  try {
+    data = typeof jsonContent === 'string' ? JSON.parse(jsonContent) : jsonContent;
+  } catch (e) {
+    console.error("JSON parse failed:", e);
+    document.getElementById('prep-content').textContent = 
+      "❌ Could not parse AI response.\n\n" + (typeof jsonContent === 'string' ? jsonContent : JSON.stringify(jsonContent, null, 2));
+    return;
+  }
+
+  const container = document.getElementById('prep-content');
+  container.innerHTML = '';
+
+  // Job Header
+  const header = document.createElement('div');
+  header.className = 'mb-6';
+  header.innerHTML = `
+    <h2 class="text-2xl font-bold text-gray-900">${data.job_title || 'Interview Preparation'}</h2>
+    <p class="text-lg text-gray-600">at <strong>${data.company || 'the company'}</strong></p>
+    <p class="mt-3 text-gray-700">${data.summary || 'No summary available.'}</p>
+  `;
+  container.appendChild(header);
+
+  // Key Skills
+  if (Array.isArray(data.key_skills) && data.key_skills.length > 0) {
+    const skills = document.createElement('div');
+    skills.className = 'mb-6';
+    skills.innerHTML = `<h3 class="text-xl font-semibold text-green-700 border-b pb-1 mb-3">Key Skills to Highlight</h3>`;
+    const ul = document.createElement('ul');
+    data.key_skills.forEach(skill => {
+      const li = document.createElement('li');
+      li.className = 'mb-2';
+      li.innerHTML = `
+        <strong>${skill.skill || 'Skill'}</strong>: ${skill.advice || 'No advice provided.'}
+        ${skill.example_prompt ? `<br><em>Practice: ${skill.example_prompt}</em>` : ''}
+      `;
+      ul.appendChild(li);
+    });
+    skills.appendChild(ul);
+    container.appendChild(skills);
+  }
+
+  // Behavioral Questions
+  if (Array.isArray(data.behavioral_questions) && data.behavioral_questions.length > 0) {
+    const bq = document.createElement('div');
+    bq.className = 'mb-6';
+    bq.innerHTML = `<h3 class="text-xl font-semibold text-blue-700 border-b pb-1 mb-3">Behavioral Questions to Prepare</h3>`;
+    const ul = document.createElement('ul');
+    data.behavioral_questions.forEach(q => {
+      const li = document.createElement('li');
+      li.className = 'mb-2';
+      li.innerHTML = `<strong>${q.question || 'Question'}</strong><br><em>Tip: ${q.tip || 'No tip provided.'}</em>`;
+      ul.appendChild(li);
+    });
+    bq.appendChild(ul);
+    container.appendChild(bq);
+  }
+
+  // Questions to Ask
+  if (Array.isArray(data.questions_to_ask) && data.questions_to_ask.length > 0) {
+    const qa = document.createElement('div');
+    qa.className = 'mb-6';
+    qa.innerHTML = `<h3 class="text-xl font-semibold text-purple-700 border-b pb-1 mb-3">Questions to Ask the Interviewer</h3>`;
+    const ul = document.createElement('ul');
+    data.questions_to_ask.forEach(q => {
+      const li = document.createElement('li');
+      li.textContent = q;
+      ul.appendChild(li);
+    });
+    qa.appendChild(ul);
+    container.appendChild(qa);
+  }
+
+  // Final Tip
+  if (data.final_tip) {
+    const tip = document.createElement('div');
+    tip.className = 'mt-6 italic text-gray-600 p-4 bg-gray-50 rounded-lg';
+    tip.textContent = data.final_tip;
+    container.appendChild(tip);
+  }
+
+  // Fallback if nothing rendered
+  if (container.children.length === 0) {
+    container.textContent = "No content generated. Please try again with a shorter resume or job description.";
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,167 @@
+<!-- templates/cover_letter.html -->
+{% extends "base.html" %}
+{% block title %}Generate Cover Letter - SmartCareer{% endblock %}
+
+{% block head %}
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-extrabold text-gray-900">✉️ Generate Cover Letter</h1>
+    <p class="mt-2 text-lg text-gray-600">Enter job details to generate a personalized, AI-written letter.</p>
+  </div>
+
+  <!-- Check if resume exists -->
+  {% if not has_resume %}
+    <div class="bg-red-50 border border-red-200 text-red-800 p-6 rounded-xl text-center">
+      <h2 class="text-lg font-bold">❌ Resume Required</h2>
+      <p>Please upload your resume first before generating a cover letter.</p>
+      <a href="{{ url_for('resume_analysis') }}" class="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+        Upload Resume
+      </a>
+    </div>
+  {% else %}
+    <!-- Cover Letter Form -->
+    <form id="cover-letter-form" class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 mb-8">
+      <div class="mb-6">
+        <label for="job_title" class="block text-sm font-medium text-gray-700">Job Title</label>
+        <input
+          type="text"
+          name="job_title"
+          id="job_title"
+          required
+          class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="e.g., Senior Frontend Developer"
+        >
+      </div>
+
+      <div class="mb-6">
+        <label for="job_description" class="block text-sm font-medium text-gray-700">Job Description</label>
+        <textarea
+          name="job_description"
+          id="job_description"
+          rows="6"
+          required
+          class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="Paste the full job description here..."
+        ></textarea>
+      </div>
+
+      <div class="mb-6">
+        <label for="company_info" class="block text-sm font-medium text-gray-700">About Company (Optional)</label>
+        <textarea
+          name="company_info"
+          id="company_info"
+          rows="4"
+          class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="e.g., Tech startup focused on AI tools for education"
+        ></textarea>
+      </div>
+
+      <div class="text-center">
+        <button
+          type="submit"
+          id="generate-btn"
+          class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold rounded-lg shadow hover:from-green-600 hover:to-teal-600 transform hover:scale-105 transition">
+          <i class="fas fa-magic mr-2"></i> Generate Letter
+        </button>
+      </div>
+    </form>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="hidden fixed inset-0 bg-white bg-opacity-90 z-50 flex items-center justify-center flex-col">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mb-4"></div>
+      <h2 class="text-xl font-semibold text-gray-800 text-center max-w-md">
+        We are generating your cover letter...<br>Please wait, thank you for your patience.
+      </h2>
+      <p class="text-sm text-gray-500 mt-2">This may take up to 30 seconds...</p>
+    </div>
+
+    <!-- Generated Cover Letter -->
+    <div id="result-container" class="hidden">
+      <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div class="bg-green-600 text-white px-6 py-4">
+          <h2 class="text-xl font-bold flex items-center">
+            <i class="fas fa-envelope mr-2"></i> Your Personalized Cover Letter
+          </h2>
+        </div>
+        <div class="p-8 bg-white prose max-w-none">
+          <pre id="letter-content" class="whitespace-pre-wrap text-gray-800 leading-relaxed font-sans text-base"></pre>
+        </div>
+        <div class="bg-gray-50 px-8 py-4 flex justify-between items-center">
+          <div class="text-sm text-gray-500">Generated with AI • Review before sending</div>
+          <div class="space-x-3">
+            <button onclick="downloadAs('txt')" class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+              <i class="fas fa-download mr-1"></i> TXT
+            </button>
+            <!-- <button onclick="downloadAs('pdf')" class="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+              <i class="fas fa-file-pdf mr-1"></i> PDF
+            </button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+// Download function
+function downloadAs(type) {
+  const text = document.getElementById('letter-content').textContent;
+  const filename = "cover-letter." + type;
+  const blob = new Blob([text], {
+    type: type === 'txt' ? 'text/plain' : 'application/pdf'
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// AJAX Form Submission
+document.getElementById('cover-letter-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const form = this;
+  const formData = new FormData(form);
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+  // Show loading
+  document.getElementById('loading-screen').classList.remove('hidden');
+
+  fetch("{{ url_for('cover_letter') }}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': csrfToken
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(err => { throw new Error(err.error || "Unknown error"); });
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      document.getElementById('letter-content').textContent = data.letter;
+      document.getElementById('result-container').classList.remove('hidden');
+    } else {
+      alert("Error: " + data.error);
+    }
+  })
+  .catch(error => {
+    console.error("Error:", error);
+    alert("Failed to generate cover letter: " + error.message);
+  })
+  .finally(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+  });
+});
+</script>
+{% endblock %}

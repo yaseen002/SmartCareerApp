@@ -1,0 +1,134 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}SmartCareer - AI Career Assistant{% endblock %}</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Custom Styles -->
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .animated-underline {
+      position: relative;
+      display: inline-block;
+    }
+    .animated-underline::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      transform: scaleX(0);
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: #4f46e5;
+      transform-origin: bottom right;
+      transition: transform 0.25s ease-out;
+    }
+    .animated-underline:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
+
+  {% block head %}{% endblock %}
+</head>
+<body class="font-sans antialiased text-gray-800">
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm sticky top-0 z-50 backdrop-blur-sm bg-opacity-90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <i class="fas fa-brain text-indigo-600 text-2xl mr-2"></i>
+            <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">SmartCareer</span>
+          </div>
+        </div>
+        <div class="ml-6 flex items-center space-x-6">
+          <a href="{{ url_for('index') }}" class="text-gray-500 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors animated-underline">Home</a>
+          <a href="#features" class="text-gray-500 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors animated-underline">Features</a>
+          <a href="#about" class="text-gray-500 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors animated-underline">About</a>
+        </div>
+        <div class="flex items-center space-x-4">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}" class="text-gray-500 hover:text-indigo-600 px-4 py-2 rounded-md text-sm font-medium">Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="text-gray-500 hover:text-indigo-600 px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:border-indigo-600 transition-colors">Logout</a>
+          {% else %}
+            <a href="{{ url_for('login') }}" class="text-gray-500 hover:text-indigo-600 px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:border-indigo-600 transition-colors">Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="p-3 mb-4 text-sm rounded-md 
+            {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="flex justify-center items-center mb-4">
+        <i class="fas fa-brain text-indigo-400 text-2xl mr-2"></i>
+        <span class="text-xl font-bold">SmartCareer</span>
+      </div>
+      <div class="flex justify-center space-x-6 mb-4">
+        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <p class="text-gray-400 text-sm">© 2025 SmartCareer. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Smooth Scroll Script -->
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

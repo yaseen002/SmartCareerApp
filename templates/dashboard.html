@@ -1,0 +1,224 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCareer Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <div class="gradient-bg text-white py-6 px-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-briefcase text-2xl"></i>
+                <h1 class="text-2xl font-bold">SmartCareer</h1>
+            </div>
+            <div class="flex items-center space-x-4 relative">
+                <button id="profileBtn" class="bg-white text-indigo-700 px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition-all">
+                    <i class="fas fa-user mr-2"></i>{{ current_user.email.split('@')[0].title() }}
+                </button>
+                <div id="profileMenu" class="hidden absolute right-0 top-12 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                    <div class="py-1">
+                        <a href="{{ url_for('dashboard') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Home</a>
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Settings</a>
+                        <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Career Toolkit Dashboard</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">Access all the tools you need to boost your career in one place</p>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Analyze Resume -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-file-alt text-blue-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Analyze Resume</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Get detailed feedback on your resume and improve your chances of getting noticed.</p>
+                    <a href="{{ url_for('resume_analysis') }}" class="w-full inline-block text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all">
+                        Analyze Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Generate Cover Letter -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-envelope-open-text text-purple-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Generate Cover Letter</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Create personalized cover letters tailored to each job application.</p>
+                    <a href="{{ url_for('cover_letter') }}" class="w-full inline-block text-center bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all">
+                        Generate Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Interview Prep -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-comments text-green-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Interview Prep</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Prepare for your interviews with common questions and expert tips.</p>
+                    <a href="{{ url_for('interview_prep') }}" class="w-full inline-block text-center bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-all">
+                        Prepare Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- View Previous Analysis -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-history text-yellow-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">View Previous Analysis</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Review your past resume analyses and track your improvements.</p>
+                    <a href="{{ url_for('view_analysis') }}" class="w-full inline-block text-center bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-all">
+                        View History <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- View Cover Letters -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-red-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-file-archive text-red-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">View Cover Letters</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Access all your previously generated cover letters in one place.</p>
+                    <a href="{{ url_for('view_cover_letters') }}" class="w-full inline-block text-center bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-all">
+                        View Letters <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- View Interview Preps -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-clipboard-list text-indigo-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">View Interview Preps</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Review your past interview preparations and notes.</p>
+                    <a href="{{ url_for('view_interview_preps') }}" class="w-full inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-all">
+                        View Preps <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="mt-12 bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Quick Stats</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Cover Letters Count -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-purple-600 font-medium">Cover Letters</p>
+                            <p class="text-2xl font-bold text-gray-800">{{ current_user.cover_letters|length }}</p>
+                        </div>
+                        <i class="fas fa-envelope-open-text text-purple-400 text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- Interview Preps Count -->
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-green-600 font-medium">Interviews Prepped</p>
+                            <p class="text-2xl font-bold text-gray-800">{{ current_user.interview_preps|length }}</p>
+                        </div>
+                        <i class="fas fa-comments text-green-400 text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- Resume Analyses -->
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-blue-600 font-medium">Resume Analyses</p>
+                            <p class="text-2xl font-bold text-gray-800">{{ current_user.resumes|length }}</p>
+                        </div>
+                        <i class="fas fa-file-alt text-blue-400 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2025 SmartCareer. All rights reserved.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="#" class="hover:text-gray-200"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-gray-200"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="hover:text-gray-200"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="hover:text-gray-200"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Profile dropdown toggle
+        const profileBtn = document.getElementById('profileBtn');
+        const profileMenu = document.getElementById('profileMenu');
+
+        profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            profileMenu.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
