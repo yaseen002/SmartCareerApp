@@ -1,16 +1,3 @@
-Absolutely! Below is a **beautiful `README.md`** file for your **SmartCareer** AI-powered career toolkit. It includes:
-
-✅ Professional structure  
-✅ All 7 screenshots from `/images`  
-✅ Detailed description for each image  
-✅ App overview, features, and tech stack  
-✅ Ready to use in GitHub or documentation
-
----
-
-### ✅ `README.md`
-
-```markdown
 # SmartCareer — AI-Powered Career Toolkit
 
 ![SmartCareer Dashboard](images/1.png)
@@ -219,6 +206,3 @@ This project is licensed under the MIT License.
 
 > ✨ **SmartCareer** – Your AI Career Coach.  
 > Built with ❤️ and Python.
-```
-
----
